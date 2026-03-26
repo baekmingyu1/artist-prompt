@@ -1,0 +1,114 @@
+{
+  "artist_name": "세븐틴 (SEVENTEEN)",
+  "activity_info": {
+    "debut_date": "20150526",
+    "debut_song": "아낀다 (Adore U)",
+    "activity_era": [
+      "2010",
+      "2020"
+    ]
+  },
+  "introduction": {
+    "summary": "플레디스 엔터테인먼트 소속의 세븐틴은 2015년 5월 데뷔한 13인조 보이그룹입니다. 이 팀은 멤버들이 직접 곡을 쓰고 안무를 제작하며 전체적인 제작 과정에 깊이 관여하는 '자체 제작 아이돌'이라는 독보적인 정체성을 가지고 있습니다. 초기에는 소년의 풋풋한 설렘과 에너지를 담은 펑키한 팝 음악을 중심으로 활동하며 대중에게 친근하게 다가갔습니다. 이후 '울고 싶지 않아'와 같은 곡을 통해 감성적인 일렉트로닉 팝으로 음악적 외연을 넓혔으며, 성숙한 내면의 고민과 열정을 담아내는 단계로 진화했습니다. 현재는 전 세계적인 영향력을 가진 아티스트로서 자신들의 연대와 희망의 메시지를 강렬한 퍼포먼스와 탄탄한 라이브 역량으로 전달하고 있습니다. 힙합, 퍼포먼스, 보컬이라는 세 개의 유닛이 유기적으로 결합하여 하나의 팀을 이루는 구조는 이들이 보여주는 음악적 다양성과 완성도의 핵심 동력입니다. 데뷔 이후 끊임없는 변화를 시도하면서도 팀 특유의 긍정적인 에너지와 화합의 가치를 유지하며 K-POP 시장의 중추적인 역할을 수행하고 있습니다.",
+    "universe": "세븐틴의 세계관은 '13명의 멤버, 3개의 유닛, 그리고 하나의 팀'이 모여 숫자 17을 완성한다는 유기적 결합과 성장을 기반으로 합니다. 이는 단순한 허구적 설정이 아니라 멤버들의 실제 관계성과 음악적 고민이 투영된 현실 밀착형 서사로 표현됩니다. 음악적으로는 각 유닛의 개별 곡들이 하나의 앨범 안에서 조화를 이루며 팀의 서사를 완성하는 방식을 취하며, 가사와 뮤직비디오를 통해 소년기에서 청년기로 넘어가는 과정의 감정 변화를 세밀하게 묘사합니다. 이러한 구조는 아티스트의 진정성을 강조하는 장치로 작용하며, 팬들에게는 멤버 개개인의 개성과 팀으로서의 결속력을 동시에 확인하게 함으로써 강력한 공감대와 해석의 즐거움을 제공합니다.",
+    "interview": "우리의 음악은 억지로 꾸며낸 이야기가 아니라 지금 이 순간 우리가 느끼는 감정과 나누고 싶은 진심을 담아내는 그릇입니다."
+  },
+  "profile": {
+    "real_name": "NULL",
+    "birth_date": "NULL",
+    "mbti": "NULL",
+    "nationality": "대한민국, 미국, 중국"
+  },
+  "performances": [
+    {
+      "type": "투어",
+      "start_date": "20241012",
+      "end_date": "20241013",
+      "title": "SEVENTEEN [RIGHT HERE] WORLD TOUR IN GOYANG"
+    },
+    {
+      "type": "투어",
+      "start_date": "20241022",
+      "end_date": "20241023",
+      "title": "SEVENTEEN [RIGHT HERE] WORLD TOUR IN ROSEMONT"
+    },
+    {
+      "type": "투어",
+      "start_date": "20241025",
+      "end_date": "20241025",
+      "title": "SEVENTEEN [RIGHT HERE] WORLD TOUR IN BELMONT PARK"
+    },
+    {
+      "type": "투어",
+      "start_date": "20241027",
+      "end_date": "20241027",
+      "title": "SEVENTEEN [RIGHT HERE] WORLD TOUR IN BELMONT PARK (Day 2)"
+    },
+    {
+      "type": "투어",
+      "start_date": "20241031",
+      "end_date": "20241101",
+      "title": "SEVENTEEN [RIGHT HERE] WORLD TOUR IN SAN ANTONIO"
+    },
+    {
+      "type": "투어",
+      "start_date": "20241105",
+      "end_date": "20241106",
+      "title": "SEVENTEEN [RIGHT HERE] WORLD TOUR IN OAKLAND"
+    },
+    {
+      "type": "투어",
+      "start_date": "20241109",
+      "end_date": "20241110",
+      "title": "SEVENTEEN [RIGHT HERE] WORLD TOUR IN LOS ANGELES"
+    },
+    {
+      "type": "투어",
+      "start_date": "20250118",
+      "end_date": "20250119",
+      "title": "SEVENTEEN [RIGHT HERE] WORLD TOUR IN BULACAN"
+    },
+    {
+      "type": "투어",
+      "start_date": "20250125",
+      "end_date": "20250125",
+      "title": "SEVENTEEN [RIGHT HERE] WORLD TOUR IN SINGAPORE"
+    },
+    {
+      "type": "투어",
+      "start_date": "20250208",
+      "end_date": "20250209",
+      "title": "SEVENTEEN [RIGHT HERE] WORLD TOUR IN JAKARTA"
+    },
+    {
+      "type": "투어",
+      "start_date": "20250215",
+      "end_date": "20250215",
+      "title": "SEVENTEEN [RIGHT HERE] WORLD TOUR IN BANGKOK"
+    },
+    {
+      "type": "투어",
+      "start_date": "20250216",
+      "end_date": "20250216",
+      "title": "SEVENTEEN [RIGHT HERE] WORLD TOUR IN BANGKOK (Day 2)"
+    },
+    {
+      "type": "팬미팅",
+      "start_date": "20240723",
+      "end_date": "20240724",
+      "title": "2024 SVT 8TH FAN MEETING <SEVENTEEN in CARAT LAND>"
+    },
+    {
+      "type": "페스티벌",
+      "start_date": "20240908",
+      "end_date": "20240908",
+      "title": "Lollapalooza Berlin"
+    },
+    {
+      "type": "페스티벌",
+      "start_date": "20240628",
+      "end_date": "20240628",
+      "title": "Glastonbury Festival"
+    }
+  ]
+}

@@ -1,0 +1,117 @@
+{
+  "artist_name": "DAY6",
+  "activity_info": {
+    "debut_date": "20150907",
+    "debut_song": "Congratulations",
+    "activity_era": ["2010", "2020"]
+  },
+  "introduction": {
+    "summary": "DAY6는 JYP엔터테인먼트 소속 밴드로, 2015년 미니앨범 'The Day'와 타이틀곡 'Congratulations'로 데뷔했어요. 출발부터 아이돌 문법보다 밴드 합주와 자작곡 역량을 전면에 둔 팀이었고, 기타·베이스·드럼·건반 위에 여러 멤버의 보컬을 교차시키는 방식으로 자기 색을 만들었어요. 초기 음악은 이별, 불안, 청춘의 흔들림을 팝록과 록 발라드에 담아 감정을 직접적으로 전달하는 데 힘이 있었어요.\n\n이후 DAY6는 한 달 단위 발표 프로젝트와 'The Book of Us' 시리즈를 거치며 팀의 서사를 더 넓혔어요. 곡의 구조와 사운드는 점점 정교해졌고, 감정의 크기를 키우기보다 일상적인 언어와 멜로디로 오래 남는 여운을 만드는 쪽으로 무게가 옮겨갔어요. 강한 록 사운드, 서정적인 피아노 중심 곡, 대합창형 후렴을 모두 소화하면서도 '밴드가 직접 쌓아 올리는 감정선'이라는 중심은 유지했어요.\n\n최근의 DAY6는 재결합 이후 'Fourever', 'Band Aid', 'Maybe Tomorrow', 'The DECADE'로 이어지는 흐름 안에서 팀의 현재를 더 분명하게 정리하고 있어요. 네 멤버의 합을 전면에 내세우고, 상처를 견디는 마음과 다시 살아가는 힘, 그리고 시간이 지나도 이어지는 관계를 노래하는 방향이 뚜렷해졌어요. 라이브에서는 각 멤버의 음색 차이와 합창형 코러스, 안정적인 연주 밸런스가 강점으로 작동하며, DAY6의 음악이 왜 무대에서 더 설득력 있게 들리는지를 보여줘요.",
+    "universe": "DAY6의 세계관은 거대한 허구 서사보다 시간, 관계, 상처, 회복처럼 누구나 겪는 감정을 이어 붙이는 구조에 가까워요. 이 팀은 'The Book of Us', 'Fourever', 'Band Aid', 'Maybe Tomorrow', 'The DECADE'처럼 앨범 제목부터 삶의 국면과 감정의 흐름을 하나의 연속선으로 묶어 왔어요. 이런 세계는 가사의 일상적 문장, 록과 발라드를 오가는 편곡, 뮤직비디오와 티징에서 보이는 계절감과 서정적 이미지로 드러나요. 이 구조가 중요한 이유는 DAY6의 음악을 단순한 사랑 노래 모음이 아니라, 시간 속에서 사람이 흔들리고 버티고 다시 나아가는 기록으로 읽게 만들기 때문이에요. 다시 말해 DAY6의 세계관은 해석을 강요하는 장치가 아니라, 팀의 정체성과 음악적 확장을 자연스럽게 설명해 주는 감정의 틀이에요.",
+    "interview": "DAY6의 핵심 가치는 자기 경험에 가까운 감정을 밴드 사운드로 솔직하게 전달하는 데 있어요. 화려한 설정보다 오래 들을 수 있는 노래, 그리고 무대에서 더 선명해지는 진심을 중요하게 여기는 팀으로 정리할 수 있어요."
+  },
+  "profile": {
+    "real_name": "NULL",
+    "birth_date": "NULL",
+    "mbti": "NULL",
+    "nationality": "대한민국"
+  },
+  "performances": [
+    {
+      "type": "투어",
+      "start_date": "20250509",
+      "end_date": "20250511",
+      "title": "DAY6 3RD WORLD TOUR <FOREVER YOUNG> FINALE in SEOUL"
+    },
+    {
+      "type": "투어",
+      "start_date": "20250516",
+      "end_date": "20250518",
+      "title": "DAY6 3RD WORLD TOUR <FOREVER YOUNG> FINALE in SEOUL"
+    },
+    {
+      "type": "페스티벌",
+      "start_date": "20250614",
+      "end_date": "20250614",
+      "title": "K-Wonder Concert in Taipei 2025"
+    },
+    {
+      "type": "팬미팅",
+      "start_date": "20250718",
+      "end_date": "20250720",
+      "title": "DAY6 4TH FANMEETING 'PIER 10: All My Days'"
+    },
+    {
+      "type": "팬미팅",
+      "start_date": "20250725",
+      "end_date": "20250727",
+      "title": "DAY6 4TH FANMEETING 'PIER 10: All My Days'"
+    },
+    {
+      "type": "투어",
+      "start_date": "20250830",
+      "end_date": "20250831",
+      "title": "DAY6 10th Anniversary Tour <The DECADE> in GOYANG"
+    },
+    {
+      "type": "투어",
+      "start_date": "20250927",
+      "end_date": "20250927",
+      "title": "DAY6 10th Anniversary Tour <The DECADE> in BANGKOK"
+    },
+    {
+      "type": "투어",
+      "start_date": "20251018",
+      "end_date": "20251018",
+      "title": "DAY6 10th Anniversary Tour <The DECADE> in HO CHI MINH CITY"
+    },
+    {
+      "type": "콘서트",
+      "start_date": "20251219",
+      "end_date": "20251221",
+      "title": "2025 DAY6 Special Concert 'The Present'"
+    },
+    {
+      "type": "투어",
+      "start_date": "20260117",
+      "end_date": "20260118",
+      "title": "DAY6 10th Anniversary Tour <The DECADE> in HONG KONG"
+    },
+    {
+      "type": "투어",
+      "start_date": "20260124",
+      "end_date": "20260124",
+      "title": "DAY6 10th Anniversary Tour <The DECADE> in MANILA"
+    },
+    {
+      "type": "투어",
+      "start_date": "20260131",
+      "end_date": "20260131",
+      "title": "DAY6 10th Anniversary Tour <The DECADE> in KUALA LUMPUR"
+    },
+    {
+      "type": "투어",
+      "start_date": "20260207",
+      "end_date": "20260208",
+      "title": "DAY6 10th Anniversary Tour <The DECADE> in DAEGU"
+    },
+    {
+      "type": "투어",
+      "start_date": "20260307",
+      "end_date": "20260308",
+      "title": "DAY6 10th Anniversary Tour <The DECADE> in TAIPEI"
+    },
+    {
+      "type": "투어",
+      "start_date": "20260314",
+      "end_date": "20260315",
+      "title": "DAY6 10th Anniversary Tour <The DECADE> in GWANGJU"
+    },
+    {
+      "type": "투어",
+      "start_date": "20260321",
+      "end_date": "20260322",
+      "title": "DAY6 10th Anniversary Tour <The DECADE> in DAEJEON"
+    }
+  ]
+}

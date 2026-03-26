@@ -1,0 +1,99 @@
+{
+  "artist_name": "ITZY",
+  "activity_info": {
+    "debut_date": "20190212",
+    "debut_song": "달라달라",
+    "activity_era": ["2010", "2020"]
+  },
+  "introduction": {
+    "summary": "ITZY는 JYP엔터테인먼트 소속의 5인조 걸그룹으로 2019년 2월 데뷔했어요. 팀의 출발점은 ‘달라달라’가 보여준 자기 긍정과 태도에 있었고, 초반 활동에서는 또렷한 비트 전환과 강한 훅, 직선적인 메시지로 자신들만의 존재감을 빠르게 굳혔어요. 단순히 센 이미지를 앞세운 팀이라기보다, 또래의 언어로 자존감과 선택의 문제를 말하는 그룹에 가까웠다고 볼 수 있어요.\n\n이후 ITZY의 음악은 더 넓어졌어요. 초기에 여러 전자음과 퍼포먼스 중심 구성이 앞에 섰다면, 시간이 지나며 멜로디의 연결과 곡의 완성도를 다듬는 방향으로 움직였어요. ‘WANNABE’, ‘Not Shy’, ‘LOCO’, ‘SNEAKERS’, ‘CAKE’ 같은 흐름을 거치며 당찬 에너지 안에 각기 다른 감정선과 대중성을 함께 담아내는 방식이 선명해졌어요. 최근 작업에서는 자신감만 외치는 데서 멈추지 않고, 흔들림이나 의심까지 드러낸 뒤 다시 앞으로 나아가는 서사를 만들고 있어요.\n\n무대에서는 빠른 안무와 큰 동선 속에서도 팀 밸런스를 유지하는 점이 강점이에요. 각 멤버의 질감이 다르지만 합을 맞췄을 때 밀도 높은 퍼포먼스로 정리되고, 라이브와 표정 연기가 함께 맞물리며 곡의 설득력을 키워 왔어요. 지금의 ITZY는 자기 확신을 출발점으로 삼되, 그 확신이 흔들리는 순간까지 음악 안에 포함시키는 팀으로 정리할 수 있어요. 그래서 이들의 현재 방향성은 강한 퍼포먼스 그룹을 넘어, 성장의 과정을 무대와 노래로 이어 보여주는 데 있다고 볼 수 있어요.",
+    "universe": "ITZY의 세계관은 복잡한 이야기 설정보다 ‘스스로를 어떻게 정의할 것인가’에 놓여 있어요. 즉, 남이 정한 기준보다 자신의 감정과 선택을 먼저 바라보는 자기 선언형 콘셉트가 중심이에요. 이 방향은 음악에서 장르 전환이 크게 드러나는 구성, 후렴에서 힘을 밀어 올리는 방식, 그리고 가사 속 자신감·의심·회복 같은 키워드를 통해 반복해서 표현돼요. 뮤직비디오와 무대에서도 선명한 색감, 속도감 있는 편집, 단단한 군무를 통해 그 태도를 시각적으로 이어가고요. 이런 구조는 ITZY가 왜 늘 강한 퍼포먼스와 자아 메시지를 함께 가져가는지 설명해 주는 장치예요. 다시 말해 이 세계관은 허구의 설정을 확장하는 데 목적이 있는 것이 아니라, 팀의 정체성과 음악적 실험, 그리고 팬이 각 시기의 메시지를 읽어낼 수 있는 틀을 만드는 역할을 해요.",
+    "interview": "ITZY는 자신감을 말할 때도 불안과 의심을 감추지 않고, 그 감정을 넘어서는 과정을 음악으로 보여주려는 팀이에요. 무대의 에너지와 자기 긍정의 메시지를 함께 가져가며, 듣는 사람에게 공감과 힘을 전하는 것을 중요한 가치로 삼고 있어요."
+  },
+  "profile": {
+    "real_name": "NULL",
+    "birth_date": "NULL",
+    "mbti": "NULL",
+    "nationality": "대한민국"
+  },
+  "performances": [
+    {
+      "type": "페스티벌",
+      "start_date": "20250704",
+      "end_date": "20250704",
+      "title": "WATERBOMB SEOUL 2025"
+    },
+    {
+      "type": "팬미팅",
+      "start_date": "20250920",
+      "end_date": "20250920",
+      "title": "ITZY The 4th Fan Meeting 있지 믿지, 날자! \"ON AIR\" - SEOUL"
+    },
+    {
+      "type": "팬미팅",
+      "start_date": "20251011",
+      "end_date": "20251011",
+      "title": "ITZY The 4th Fan Meeting 있지 믿지, 날자! \"ON AIR\" - TOKYO"
+    },
+    {
+      "type": "팬미팅",
+      "start_date": "20251012",
+      "end_date": "20251012",
+      "title": "ITZY The 4th Fan Meeting 있지 믿지, 날자! \"ON AIR\" - TOKYO"
+    },
+    {
+      "type": "투어",
+      "start_date": "20260213",
+      "end_date": "20260213",
+      "title": "ITZY 3RD WORLD TOUR <TUNNEL VISION> in SEOUL"
+    },
+    {
+      "type": "투어",
+      "start_date": "20260214",
+      "end_date": "20260214",
+      "title": "ITZY 3RD WORLD TOUR <TUNNEL VISION> in SEOUL"
+    },
+    {
+      "type": "투어",
+      "start_date": "20260215",
+      "end_date": "20260215",
+      "title": "ITZY 3RD WORLD TOUR <TUNNEL VISION> in SEOUL"
+    },
+    {
+      "type": "페스티벌",
+      "start_date": "20260314",
+      "end_date": "20260314",
+      "title": "2026 K-WONDER CONCERT in TAIPEI"
+    },
+    {
+      "type": "투어",
+      "start_date": "20260417",
+      "end_date": "20260417",
+      "title": "ITZY 3RD WORLD TOUR <TUNNEL VISION> in AUSTRALIA - MELBOURNE"
+    },
+    {
+      "type": "투어",
+      "start_date": "20260419",
+      "end_date": "20260419",
+      "title": "ITZY 3RD WORLD TOUR <TUNNEL VISION> in AUSTRALIA - SYDNEY"
+    },
+    {
+      "type": "투어",
+      "start_date": "20260422",
+      "end_date": "20260422",
+      "title": "ITZY 3RD WORLD TOUR <TUNNEL VISION> in AUCKLAND"
+    },
+    {
+      "type": "투어",
+      "start_date": "20260704",
+      "end_date": "20260704",
+      "title": "ITZY 3RD WORLD TOUR <TUNNEL VISION> in BANGKOK"
+    },
+    {
+      "type": "투어",
+      "start_date": "20260711",
+      "end_date": "20260711",
+      "title": "ITZY 3RD WORLD TOUR <TUNNEL VISION> in MANILA"
+    }
+  ]
+}
