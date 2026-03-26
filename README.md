@@ -50,11 +50,11 @@
 - 시스템 프롬프트 `.txt` 자동 로드
 - 샘플 JSON 자동 탐색 및 선택 로드
 - `%아티스트명%` 치환 기반 실행
-- OpenAI `Responses API` 호출
+- OpenAI `Responses API` 3단계 파이프라인 호출
 - `Raw Output` / `Parsed JSON` 동시 확인
 - 결과 JSON 기반 HTML 미리보기 생성
 - 실행 이력 로컬 저장
-- 모델별 토큰 및 예상 비용 표시
+- 단계별 모델, 토큰, 예상 비용 표시
 
 ## 실행 방법
 
@@ -90,7 +90,7 @@ npm run dev
 | 키 | 설명 | 예시 |
 |----|------|------|
 | `OPENAI_API_KEY` | OpenAI API Key | `sk-...` |
-| `OPENAI_MODEL` | 기본 실행 모델 | `gpt-5.4` |
+| `OPENAI_MODEL` | 기본 실행 모델 또는 introduction 기본 모델 | `gpt-5.4` |
 | `OPENAI_BASE_URL` | OpenAI 기본 URL 또는 커스텀 API URL | `https://api.openai.com/v1` |
 | `ALLOWED_ORIGIN` | 프론트엔드 허용 출처 | `http://localhost:5173` |
 
@@ -104,9 +104,9 @@ npm run dev
 
 1. 루트 폴더에 시스템 프롬프트 `.txt`와 샘플 `.json`을 둡니다.
 2. 프론트에서 샘플 JSON을 선택해 기준 결과를 확인합니다.
-3. 아티스트명, 모델, reasoning, 웹 검색 사용 여부를 설정합니다.
+3. 아티스트명, 기본 모델, 단계별 모델, reasoning, 웹 검색 사용 여부를 설정합니다.
 4. 사용자 프롬프트를 입력하고 실행합니다.
-5. 결과를 `Raw Output`, `Parsed JSON`, `HTML 보기`, `실행 이력`으로 검증합니다.
+5. 결과를 `단계별 실행`, `비용 계산 상세`, `Raw Output`, `Parsed JSON`, `HTML 보기`, `실행 이력`으로 검증합니다.
 
 ## API 요약
 
@@ -125,6 +125,7 @@ npm run dev
 - 모델별 가격표에 없는 모델명은 비용 계산이 `null`로 표시됩니다.
 - 응답 텍스트가 JSON 형식이 아니면 `Parsed JSON`은 비어 있고 원문만 유지됩니다.
 - 웹 검색 결과의 인용 링크는 JSON 값에 남지 않도록 후처리됩니다.
+- 각 단계 응답이 JSON으로 파싱되지 않으면 실행이 실패합니다.
 
 ## 브랜치 전략
 
@@ -165,6 +166,7 @@ npm run dev
 - 실행 이력은 `backend/data/run_history.json`에 최근 100건까지 저장합니다.
 - 비용 계산은 코드에 정의된 모델별 `per 1M tokens` 기준표를 사용합니다.
 - 웹 검색 사용 시 최종 JSON 출력에 출처 링크가 남지 않도록 후처리합니다.
+- 실행은 `수집/정리 -> 검증/정리 -> introduction 생성` 3단계로 분리되며, 단계별 모델을 다르게 지정할 수 있습니다.
 
 ## 비고
 

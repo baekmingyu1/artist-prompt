@@ -16,6 +16,7 @@ type RunResponse = {
   run_id: string;
   created_at: string;
   model: string;
+  stage_models: Record<string, string>;
   artist_name: string;
   reasoning_effort: string;
   use_web_search: boolean;
@@ -42,6 +43,7 @@ type RunResponse = {
       output: number;
     };
   };
+  stage_results: StageResult[];
   web_sources: {
     type?: string | null;
     title?: string | null;
@@ -50,16 +52,78 @@ type RunResponse = {
   duration_ms: number;
 };
 
+type StageResult = {
+  stage: string;
+  model: string;
+  duration_ms: number;
+  output_text: string;
+  parsed_json: unknown | null;
+  usage: RunResponse["usage"];
+  pricing: RunResponse["pricing"];
+  web_sources: RunResponse["web_sources"];
+};
+
+type ModelPriceInfo = {
+  model: string;
+  input_price: number;
+  cached_input_price: number;
+  output_price: number;
+  description: string;
+};
+
+type PricingTableRow = {
+  model: string;
+  input_price: number;
+  cached_input_price: number;
+  output_price: number;
+};
+
+type ModelsResponse = {
+  models: ModelPriceInfo[];
+  pricing_table: PricingTableRow[];
+};
+
+type StageTokenEstimate = {
+  stage: string;
+  description: string;
+  estimated_input_tokens: number;
+  estimated_output_tokens: number;
+};
+
+type PricingComparisonRequest = {
+  estimated_input_tokens: number;
+  estimated_output_tokens: number;
+  use_caching: boolean;
+};
+
+type ModelCostBreakdown = {
+  model: string;
+  input_cost_usd: number;
+  cached_input_cost_usd: number;
+  output_cost_usd: number;
+  total_cost_usd: number;
+};
+
+type PricingComparisonResponse = {
+  request: PricingComparisonRequest;
+  stage_estimates: StageTokenEstimate[];
+  model_costs: ModelCostBreakdown[];
+  cheapest_model: string;
+  most_expensive_model: string;
+};
+
 type HistoryItem = {
   run_id: string;
   created_at: string;
   model: string;
+  stage_models: Record<string, string>;
   artist_name: string;
   reasoning_effort: string;
   use_web_search: boolean;
   duration_ms: number;
   usage: RunResponse["usage"];
   pricing: RunResponse["pricing"];
+  stage_results: StageResult[];
   output_preview: string;
   parsed_json: unknown | null;
 };
@@ -130,6 +194,15 @@ function formatDateTime(value: string): string {
   } catch {
     return value;
   }
+}
+
+function formatStageLabel(value: string): string {
+  const labels: Record<string, string> = {
+    collection: "수집/정리",
+    validation: "검증/정리",
+    introduction: "소개글 생성",
+  };
+  return labels[value] ?? value;
 }
 
 function escapeHtml(value: string): string {
@@ -357,6 +430,11 @@ export default function App() {
   const [userPrompt, setUserPrompt] = useState(DEFAULT_USER_PROMPT);
   const [artistName, setArtistName] = useState("투어스");
   const [model, setModel] = useState("gpt-5.4");
+  const [stageModels, setStageModels] = useState<Record<string, string>>({
+    collection: "gpt-5-mini",
+    validation: "gpt-5-mini",
+    introduction: "gpt-5.4",
+  });
   const [reasoningEffort, setReasoningEffort] = useState("medium");
   const [useWebSearch, setUseWebSearch] = useState(true);
   const [sampleFiles, setSampleFiles] = useState<string[]>([]);
@@ -367,6 +445,10 @@ export default function App() {
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showModelComparison, setShowModelComparison] = useState(false);
+  const [modelComparison, setModelComparison] = useState<PricingComparisonResponse | null>(null);
+  const [comparisonReference, setComparisonReference] = useState<RunResponse | HistoryItem | null>(null);
+  const [isLoadingComparison, setIsLoadingComparison] = useState(false);
 
   useEffect(() => {
     const loadBootstrap = async () => {
@@ -381,6 +463,11 @@ export default function App() {
         setSampleFiles(data.sample_files);
         setPromptFileName(data.prompt_file_name);
         setModel(data.default_model);
+        setStageModels({
+          collection: "gpt-5-mini",
+          validation: "gpt-5-mini",
+          introduction: data.default_model,
+        });
       } catch (fetchError) {
         const message = fetchError instanceof Error ? fetchError.message : "알 수 없는 오류가 발생했습니다.";
         setError(message);
@@ -427,6 +514,30 @@ export default function App() {
     }
   };
 
+  const handleModelChange = (value: string) => {
+    setModel(value);
+    if (value === "auto") {
+      setStageModels({
+        collection: "gpt-5-mini",
+        validation: "gpt-5-mini",
+        introduction: "gpt-5.4",
+      });
+      return;
+    }
+    setStageModels({
+      collection: value,
+      validation: value,
+      introduction: value,
+    });
+  };
+
+  const handleStageModelChange = (stage: string, value: string) => {
+    setStageModels((current) => ({
+      ...current,
+      [stage]: value,
+    }));
+  };
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsLoading(true);
@@ -443,6 +554,7 @@ export default function App() {
           user_prompt: userPrompt,
           artist_name: artistName,
           model,
+          stage_models: stageModels,
           reasoning_effort: reasoningEffort,
           use_web_search: useWebSearch,
         }),
@@ -460,12 +572,14 @@ export default function App() {
           run_id: runResult.run_id,
           created_at: runResult.created_at,
           model: runResult.model,
+          stage_models: runResult.stage_models,
           artist_name: runResult.artist_name,
           reasoning_effort: runResult.reasoning_effort,
           use_web_search: runResult.use_web_search,
           duration_ms: runResult.duration_ms,
           usage: runResult.usage,
           pricing: runResult.pricing,
+          stage_results: runResult.stage_results,
           output_preview: runResult.output_text.replace(/\s+/g, " ").trim().slice(0, 180),
           parsed_json: runResult.parsed_json,
         },
@@ -512,6 +626,45 @@ export default function App() {
     openPreviewFromJson(item.parsed_json as ArtistJson);
   };
 
+  const handleShowModelComparison = async (source?: RunResponse | HistoryItem) => {
+    setShowModelComparison(true);
+    setIsLoadingComparison(true);
+    const selectedResult = source || result;
+    setComparisonReference(selectedResult ?? null);
+
+    try {
+      if (!selectedResult) {
+        throw new Error("비교할 실행 데이터가 없습니다.");
+      }
+      const estimatedInput = selectedResult.usage.input_tokens || 5000;
+      const estimatedOutput = selectedResult.usage.output_tokens || 2000;
+
+      const response = await fetch(`${API_BASE_URL}/api/pricing/comparison`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          estimated_input_tokens: estimatedInput,
+          estimated_output_tokens: estimatedOutput,
+          use_caching: true,
+        }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.detail ?? "모델 비교를 불러올 수 없습니다.");
+      }
+
+      setModelComparison(data as PricingComparisonResponse);
+    } catch (fetchError) {
+      const message = fetchError instanceof Error ? fetchError.message : "모델 비교 로드 중 오류가 발생했습니다.";
+      setError(message);
+    } finally {
+      setIsLoadingComparison(false);
+    }
+  };
+
   return (
     <main className="page-shell">
       <section className="hero-panel">
@@ -555,7 +708,14 @@ export default function App() {
             </label>
             <label>
               <span>모델</span>
-              <input value={model} onChange={(event) => setModel(event.target.value)} placeholder="예: gpt-5.4" />
+              <select value={model} onChange={(event) => handleModelChange(event.target.value)}>
+                <option value="auto">auto (프롬프트 기반 자동 선택)</option>
+                <option value="gpt-5.4">gpt-5.4 (고품질)</option>
+                <option value="gpt-5">gpt-5</option>
+                <option value="gpt-5-mini">gpt-5-mini</option>
+                <option value="gpt-5-nano">gpt-5-nano</option>
+              </select>
+              <small style={{ color: "#666" }}>auto 선택 시 수집/검증은 gpt-5-mini, 소개글은 gpt-5.4로 3단계 분리 실행됩니다.</small>
             </label>
             <label>
               <span>Reasoning</span>
@@ -563,6 +723,36 @@ export default function App() {
                 <option value="low">low</option>
                 <option value="medium">medium</option>
                 <option value="high">high</option>
+              </select>
+            </label>
+          </div>
+
+          <div className="control-row">
+            <label>
+              <span>수집/정리 모델</span>
+              <select value={stageModels.collection} onChange={(event) => handleStageModelChange("collection", event.target.value)}>
+                <option value="gpt-5.4">gpt-5.4</option>
+                <option value="gpt-5">gpt-5</option>
+                <option value="gpt-5-mini">gpt-5-mini</option>
+                <option value="gpt-5-nano">gpt-5-nano</option>
+              </select>
+            </label>
+            <label>
+              <span>검증/정리 모델</span>
+              <select value={stageModels.validation} onChange={(event) => handleStageModelChange("validation", event.target.value)}>
+                <option value="gpt-5.4">gpt-5.4</option>
+                <option value="gpt-5">gpt-5</option>
+                <option value="gpt-5-mini">gpt-5-mini</option>
+                <option value="gpt-5-nano">gpt-5-nano</option>
+              </select>
+            </label>
+            <label>
+              <span>소개글 모델</span>
+              <select value={stageModels.introduction} onChange={(event) => handleStageModelChange("introduction", event.target.value)}>
+                <option value="gpt-5.4">gpt-5.4</option>
+                <option value="gpt-5">gpt-5</option>
+                <option value="gpt-5-mini">gpt-5-mini</option>
+                <option value="gpt-5-nano">gpt-5-nano</option>
               </select>
             </label>
           </div>
@@ -673,27 +863,217 @@ export default function App() {
 
           {result ? (
             <section className="pricing-panel">
-              <h3>비용 계산 상세</h3>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+                <h3 style={{ margin: 0 }}>단계별 실행</h3>
+              </div>
               <div className="pricing-grid">
+                {result.stage_results.map((stage) => (
+                  <div key={stage.stage}>
+                    <span>{formatStageLabel(stage.stage)}</span>
+                    <strong>{stage.model}</strong>
+                    <small>
+                      {formatNumber(stage.usage.total_tokens)} tokens / {formatUsd(stage.pricing.estimated_cost_usd)} / {formatNumber(stage.duration_ms)}ms
+                    </small>
+                  </div>
+                ))}
+              </div>
+            </section>
+          ) : null}
+
+          {result ? (
+            <section className="pricing-panel">
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+                <h3 style={{ margin: 0 }}>비용 계산 상세</h3>
+                <button
+                  type="button"
+                  className="secondary-button"
+                  onClick={() => handleShowModelComparison()}
+                  disabled={isLoadingComparison}
+                >
+                  {isLoadingComparison ? "로드 중..." : "모델 비용 비교"}
+                </button>
+              </div>
+              <div className="pricing-grid">
+                <div>
+                  <span>총 토큰</span>
+                  <strong>{formatNumber(result.usage.total_tokens)}</strong>
+                </div>
+                <div>
+                  <span>입력 토큰 (비캐시)</span>
+                  <strong>{formatNumber(result.usage.input_tokens - result.usage.cached_input_tokens)}</strong>
+                </div>
+                <div>
+                  <span>캐시 입력 토큰</span>
+                  <strong>{formatNumber(result.usage.cached_input_tokens)}</strong>
+                </div>
+                <div>
+                  <span>출력 토큰</span>
+                  <strong>{formatNumber(result.usage.output_tokens)}</strong>
+                </div>
                 <div>
                   <span>입력 비용</span>
                   <strong>{formatUsd(result.pricing.input_cost_usd)}</strong>
                 </div>
                 <div>
                   <span>캐시 입력 비용</span>
-                  <strong>{formatUsd(result.pricing.cached_input_cost_usd)}</strong>
+                  <strong>{formatUsd(result.pricing.cached_input_cost_usd)} <small>(90% 절감)</small></strong>
                 </div>
                 <div>
                   <span>출력 비용</span>
                   <strong>{formatUsd(result.pricing.output_cost_usd)}</strong>
                 </div>
                 <div>
-                  <span>가격 기준</span>
-                  <strong>{result.pricing.price_reference}</strong>
+                  <span>총 비용</span>
+                  <strong>{formatUsd(result.pricing.estimated_cost_usd)}</strong>
                 </div>
               </div>
             </section>
           ) : null}
+
+          {showModelComparison && modelComparison && (
+            <section style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              zIndex: 1000,
+              padding: "20px"
+            }}>
+              <div style={{
+                backgroundColor: "#ffffff",
+                color: "#0f172a",
+                borderRadius: "12px",
+                maxWidth: "900px",
+                maxHeight: "80vh",
+                overflow: "auto",
+                padding: "30px",
+                boxShadow: "0 20px 60px rgba(0, 0, 0, 0.45)",
+                border: "1px solid #dbe2ea"
+              }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+                  <h2 style={{ margin: 0 }}>실사용 모델 비용 정보</h2>
+                  <button
+                    onClick={() => setShowModelComparison(false)}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      fontSize: "24px",
+                      cursor: "pointer"
+                    }}
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                {comparisonReference ? (
+                  <div style={{ marginBottom: "24px", border: "1px solid #dbe2ea", borderRadius: "10px", padding: "14px", backgroundColor: "#f8fafc" }}>
+                    <h3 style={{ margin: "0 0 8px" }}>실사용 결과 (모델: {comparisonReference.model})</h3>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(5, minmax(0, 1fr))", gap: "10px", fontSize: "13px" }}>
+                      <div><strong>입력 토큰</strong><br />{formatNumber(comparisonReference.usage.input_tokens)}</div>
+                      <div><strong>캐시 입력</strong><br />{formatNumber(comparisonReference.usage.cached_input_tokens)}</div>
+                      <div><strong>출력 토큰</strong><br />{formatNumber(comparisonReference.usage.output_tokens)}</div>
+                      <div><strong>총 토큰</strong><br />{formatNumber(comparisonReference.usage.total_tokens)}</div>
+                      <div><strong>총 비용</strong><br />{formatUsd(comparisonReference.pricing.estimated_cost_usd)}</div>
+                    </div>
+                  </div>
+                ) : (
+                  <p>실행 결과가 없습니다.</p>
+                )}
+
+                {comparisonReference?.stage_results?.length ? (
+                  <div style={{ marginBottom: "24px" }}>
+                    <h3 style={{ margin: "0 0 12px" }}>실제 실행 단계별 상세</h3>
+                    <div style={{ overflowX: "auto", border: "1px solid #dbe2ea", borderRadius: "10px" }}>
+                      <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "13px" }}>
+                        <thead style={{ backgroundColor: "#f8fafc" }}>
+                          <tr>
+                            <th style={{ padding: "12px", textAlign: "left", borderBottom: "1px solid #dbe2ea" }}>단계</th>
+                            <th style={{ padding: "12px", textAlign: "left", borderBottom: "1px solid #dbe2ea" }}>실행 모델</th>
+                            <th style={{ padding: "12px", textAlign: "right", borderBottom: "1px solid #dbe2ea" }}>입력</th>
+                            <th style={{ padding: "12px", textAlign: "right", borderBottom: "1px solid #dbe2ea" }}>캐시 입력</th>
+                            <th style={{ padding: "12px", textAlign: "right", borderBottom: "1px solid #dbe2ea" }}>출력</th>
+                            <th style={{ padding: "12px", textAlign: "right", borderBottom: "1px solid #dbe2ea" }}>총 토큰</th>
+                            <th style={{ padding: "12px", textAlign: "right", borderBottom: "1px solid #dbe2ea" }}>예상 비용</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {comparisonReference.stage_results.map((stage) => (
+                            <tr key={`${comparisonReference.run_id}-${stage.stage}`}>
+                              <td style={{ padding: "12px", borderBottom: "1px solid #eef2f7" }}>{formatStageLabel(stage.stage)}</td>
+                              <td style={{ padding: "12px", borderBottom: "1px solid #eef2f7" }}>{stage.model}</td>
+                              <td style={{ padding: "12px", textAlign: "right", borderBottom: "1px solid #eef2f7" }}>{formatNumber(stage.usage.input_tokens)}</td>
+                              <td style={{ padding: "12px", textAlign: "right", borderBottom: "1px solid #eef2f7" }}>{formatNumber(stage.usage.cached_input_tokens)}</td>
+                              <td style={{ padding: "12px", textAlign: "right", borderBottom: "1px solid #eef2f7" }}>{formatNumber(stage.usage.output_tokens)}</td>
+                              <td style={{ padding: "12px", textAlign: "right", borderBottom: "1px solid #eef2f7" }}>{formatNumber(stage.usage.total_tokens)}</td>
+                              <td style={{ padding: "12px", textAlign: "right", borderBottom: "1px solid #eef2f7" }}>{formatUsd(stage.pricing.estimated_cost_usd)}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                ) : null}
+
+                <div style={{ marginBottom: "24px" }}>
+                  <h3 style={{ margin: "0 0 12px" }}>대체 실행 시나리오 비교</h3>
+                  <div style={{ overflowX: "auto", border: "1px solid #dbe2ea", borderRadius: "10px" }}>
+                    <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "13px" }}>
+                      <thead style={{ backgroundColor: "#f8fafc" }}>
+                        <tr>
+                          <th style={{ padding: "12px", textAlign: "left", borderBottom: "1px solid #dbe2ea" }}>시나리오</th>
+                          <th style={{ padding: "12px", textAlign: "right", borderBottom: "1px solid #dbe2ea" }}>입력 비용</th>
+                          <th style={{ padding: "12px", textAlign: "right", borderBottom: "1px solid #dbe2ea" }}>캐시 입력 비용</th>
+                          <th style={{ padding: "12px", textAlign: "right", borderBottom: "1px solid #dbe2ea" }}>출력 비용</th>
+                          <th style={{ padding: "12px", textAlign: "right", borderBottom: "1px solid #dbe2ea" }}>총 비용</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {comparisonReference ? (
+                          <tr>
+                            <td style={{ padding: "12px", borderBottom: "1px solid #eef2f7" }}>실제 실행 조합 ({comparisonReference.model})</td>
+                            <td style={{ padding: "12px", textAlign: "right", borderBottom: "1px solid #eef2f7" }}>{formatUsd(comparisonReference.pricing.input_cost_usd)}</td>
+                            <td style={{ padding: "12px", textAlign: "right", borderBottom: "1px solid #eef2f7" }}>{formatUsd(comparisonReference.pricing.cached_input_cost_usd)}</td>
+                            <td style={{ padding: "12px", textAlign: "right", borderBottom: "1px solid #eef2f7" }}>{formatUsd(comparisonReference.pricing.output_cost_usd)}</td>
+                            <td style={{ padding: "12px", textAlign: "right", borderBottom: "1px solid #eef2f7", fontWeight: 700 }}>{formatUsd(comparisonReference.pricing.estimated_cost_usd)}</td>
+                          </tr>
+                        ) : null}
+                        {modelComparison.model_costs.map((item) => (
+                          <tr key={item.model}>
+                            <td style={{ padding: "12px", borderBottom: "1px solid #eef2f7" }}>전부 {item.model}로 실행</td>
+                            <td style={{ padding: "12px", textAlign: "right", borderBottom: "1px solid #eef2f7" }}>{formatUsd(item.input_cost_usd)}</td>
+                            <td style={{ padding: "12px", textAlign: "right", borderBottom: "1px solid #eef2f7" }}>{formatUsd(item.cached_input_cost_usd)}</td>
+                            <td style={{ padding: "12px", textAlign: "right", borderBottom: "1px solid #eef2f7" }}>{formatUsd(item.output_cost_usd)}</td>
+                            <td style={{ padding: "12px", textAlign: "right", borderBottom: "1px solid #eef2f7" }}>{formatUsd(item.total_cost_usd)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <div style={{ marginTop: "20px", padding: "15px", backgroundColor: "#f0f7ff", borderRadius: "8px", fontSize: "14px" }}>
+                  <strong>안내</strong>
+                  <p style={{ margin: "8px 0" }}>
+                    실제 실행 조합 행은 이번 실행에서 단계별 모델을 나눠 사용한 실측 합계입니다. 아래 단일 모델 행들은 같은 토큰 규모를 기준으로 전체를 한 모델로 돌렸다고 가정한 비교값입니다.
+                  </p>
+                </div>
+
+                <div style={{ marginTop: "20px", textAlign: "right" }}>
+                  <button
+                    onClick={() => setShowModelComparison(false)}
+                    className="secondary-button"
+                  >
+                    닫기
+                  </button>
+                </div>
+              </div>
+            </section>
+          )}
 
           <div className="result-grid">
             <article className="result-card">
@@ -730,7 +1110,19 @@ export default function App() {
                         <span>{item.model}</span>
                         <span>{item.reasoning_effort}</span>
                         <span>{item.use_web_search ? "web on" : "web off"}</span>
+                        {Object.entries(item.stage_models || {}).map(([stage, stageModel]) => (
+                          <span key={`${item.run_id}-${stage}`}>{formatStageLabel(stage)}:{stageModel}</span>
+                        ))}
                       </div>
+                      <button
+                        type="button"
+                        className="secondary-button"
+                        onClick={() => handleShowModelComparison(item)}
+                        disabled={isLoadingComparison}
+                        title="모델별 예상 비용을 비교합니다"
+                      >
+                        비용 비교
+                      </button>
                       <button
                         type="button"
                         className="secondary-button"
