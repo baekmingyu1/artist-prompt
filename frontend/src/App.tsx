@@ -425,6 +425,17 @@ function createPreviewHtml(data: ArtistJson): string {
 </html>`;
 }
 
+function createPreviewFileName(artistName?: string): string {
+  const baseName = (artistName || "artist-preview")
+    .trim()
+    .replace(/[<>:"/\\|?*\x00-\x1F]/g, "-")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+
+  return `${baseName || "artist-preview"}-preview.html`;
+}
+
 export default function App() {
   const [systemPrompt, setSystemPrompt] = useState("");
   const [userPrompt, setUserPrompt] = useState(DEFAULT_USER_PROMPT);
@@ -617,6 +628,28 @@ export default function App() {
     window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
 
+  const downloadPreviewFromJson = (json: ArtistJson) => {
+    const previewHtml = createPreviewHtml(json);
+    const blob = new Blob([previewHtml], { type: "text/html;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = createPreviewFileName(json.artist_name);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+  };
+
+  const handleDownloadPreview = () => {
+    if (!result?.parsed_json || typeof result.parsed_json !== "object") {
+      setError("다운로드할 HTML 결과가 없습니다.");
+      return;
+    }
+
+    downloadPreviewFromJson(result.parsed_json as ArtistJson);
+  };
+
   const handleOpenHistoryPreview = (item: HistoryItem) => {
     if (!item.parsed_json || typeof item.parsed_json !== "object") {
       setError("이 실행 이력에는 HTML로 열 수 있는 JSON이 저장되어 있지 않습니다.");
@@ -624,6 +657,15 @@ export default function App() {
     }
 
     openPreviewFromJson(item.parsed_json as ArtistJson);
+  };
+
+  const handleDownloadHistoryPreview = (item: HistoryItem) => {
+    if (!item.parsed_json || typeof item.parsed_json !== "object") {
+      setError("이 실행 이력에는 다운로드할 HTML 결과가 저장되어 있지 않습니다.");
+      return;
+    }
+
+    downloadPreviewFromJson(item.parsed_json as ArtistJson);
   };
 
   const handleShowModelComparison = async (source?: RunResponse | HistoryItem) => {
@@ -824,6 +866,14 @@ export default function App() {
                 disabled={!result?.parsed_json}
               >
                 HTML 보기
+              </button>
+              <button
+                type="button"
+                className="secondary-button"
+                onClick={handleDownloadPreview}
+                disabled={!result?.parsed_json}
+              >
+                HTML 다운로드
               </button>
             </div>
           </div>
@@ -1130,6 +1180,14 @@ export default function App() {
                         disabled={!item.parsed_json}
                       >
                         HTML 보기
+                      </button>
+                      <button
+                        type="button"
+                        className="secondary-button"
+                        onClick={() => handleDownloadHistoryPreview(item)}
+                        disabled={!item.parsed_json}
+                      >
+                        HTML 다운로드
                       </button>
                     </div>
                   </div>
