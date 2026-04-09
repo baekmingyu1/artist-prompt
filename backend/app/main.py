@@ -188,7 +188,21 @@ def parse_json_text(text: str) -> Any | None:
     try:
         return json.loads(cleaned)
     except json.JSONDecodeError:
+        pass
+
+    # Fall back to the first complete JSON object/array when the model adds prose.
+    starts = [idx for idx in (cleaned.find("{"), cleaned.find("[")) if idx != -1]
+    if not starts:
         return None
+
+    decoder = json.JSONDecoder()
+    for start in sorted(starts):
+        try:
+            parsed, _ = decoder.raw_decode(cleaned[start:])
+            return parsed
+        except json.JSONDecodeError:
+            continue
+    return None
 
 
 def strip_inline_citations(text: str) -> str:
@@ -361,6 +375,63 @@ def merge_artist_payload(base_payload: Any, introduction_payload: Any) -> Any:
     return merged
 
 
+ARTIST_COLLECTION_SCHEMA: dict[str, Any] = {
+    "type": "object",
+    "additionalProperties": False,
+    "properties": {
+        "artist_name": {"type": "string"},
+        "activity_info": {
+            "type": "object",
+            "additionalProperties": False,
+            "properties": {
+                "debut_date": {"type": "string"},
+                "debut_song": {"type": "string"},
+                "activity_era": {"type": "array", "items": {"type": "string"}},
+            },
+            "required": ["debut_date", "debut_song", "activity_era"],
+        },
+        "profile": {
+            "type": "object",
+            "additionalProperties": False,
+            "properties": {
+                "real_name": {"type": "string"},
+                "birth_date": {"type": "string"},
+                "mbti": {"type": "string"},
+                "nationality": {"type": "string"},
+            },
+            "required": ["real_name", "birth_date", "mbti", "nationality"],
+        },
+        "performances": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "additionalProperties": False,
+                "properties": {
+                    "type": {"type": "string"},
+                    "start_date": {"type": "string"},
+                    "end_date": {"type": "string"},
+                    "title": {"type": "string"},
+                },
+                "required": ["type", "start_date", "end_date", "title"],
+            },
+        },
+    },
+    "required": ["artist_name", "activity_info", "profile", "performances"],
+}
+
+
+INTRODUCTION_SCHEMA: dict[str, Any] = {
+    "type": "object",
+    "additionalProperties": False,
+    "properties": {
+        "summary": {"type": "string"},
+        "universe": {"type": "string"},
+        "interview": {"type": "string"},
+    },
+    "required": ["summary", "universe", "interview"],
+}
+
+
 def execute_stage(
     client: OpenAI,
     *,
@@ -370,17 +441,34 @@ def execute_stage(
     instructions: str,
     stage_input: str,
     use_web_search: bool,
+    json_schema: dict[str, Any] | None = None,
+    schema_name: str | None = None,
 ) -> dict[str, Any]:
     tools = [{"type": "web_search"}] if use_web_search else []
     started = time.perf_counter()
+    text_config: dict[str, Any] | None = None
+    if json_schema and schema_name:
+        text_config = {
+            "format": {
+                "type": "json_schema",
+                "name": schema_name,
+                "schema": json_schema,
+                "strict": True,
+            }
+        }
+    request_kwargs: dict[str, Any] = {
+        "model": model_name,
+        "reasoning": {"effort": reasoning_effort},
+        "instructions": instructions,
+        "input": stage_input,
+        "tools": tools,
+        "tool_choice": "auto" if tools else None,
+        "include": ["web_search_call.action.sources"] if tools else None,
+    }
+    if text_config:
+        request_kwargs["text"] = text_config
     response = client.responses.create(
-        model=model_name,
-        reasoning={"effort": reasoning_effort},
-        instructions=instructions,
-        input=stage_input,
-        tools=tools,
-        tool_choice="auto" if tools else None,
-        include=["web_search_call.action.sources"] if tools else None,
+        **request_kwargs,
     )
     duration_ms = int((time.perf_counter() - started) * 1000)
     output_text = getattr(response, "output_text", "") or ""
@@ -670,6 +758,8 @@ def run_prompt(payload: RunRequest) -> RunResponse:
             instructions=collection_instructions,
             stage_input=collection_input,
             use_web_search=payload.use_web_search,
+            json_schema=ARTIST_COLLECTION_SCHEMA,
+            schema_name="artist_collection",
         )
         if not isinstance(collection_result["parsed_json"], dict):
             raise HTTPException(status_code=500, detail="1단계 결과를 JSON으로 파싱하지 못했습니다.")
@@ -695,6 +785,8 @@ def run_prompt(payload: RunRequest) -> RunResponse:
             instructions=validation_instructions,
             stage_input=validation_input,
             use_web_search=payload.use_web_search,
+            json_schema=ARTIST_COLLECTION_SCHEMA,
+            schema_name="artist_validation",
         )
         if not isinstance(validation_result["parsed_json"], dict):
             raise HTTPException(status_code=500, detail="2단계 결과를 JSON으로 파싱하지 못했습니다.")
@@ -720,6 +812,8 @@ def run_prompt(payload: RunRequest) -> RunResponse:
             instructions=introduction_instructions,
             stage_input=introduction_input,
             use_web_search=False,
+            json_schema=INTRODUCTION_SCHEMA,
+            schema_name="artist_introduction",
         )
         if introduction_result["parsed_json"] is None:
             raise HTTPException(status_code=500, detail="3단계 결과를 JSON으로 파싱하지 못했습니다.")
