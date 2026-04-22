@@ -468,6 +468,133 @@ textarea {
   line-height: 1.6;
 }
 
+.comparison-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.comparison-modal {
+  width: min(900px, 100%);
+  max-height: 80vh;
+  overflow: auto;
+  padding: 30px;
+  border: 1px solid #dbe2ea;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #0f172a;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+}
+
+.comparison-modal-header,
+.comparison-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.comparison-modal-header {
+  margin-bottom: 20px;
+}
+
+.comparison-modal-header h2,
+.comparison-section h3,
+.comparison-summary h3 {
+  margin: 0;
+}
+
+.comparison-close-button {
+  border: 0;
+  background: none;
+  color: #0f172a;
+  font-size: 24px;
+}
+
+.comparison-summary {
+  margin-bottom: 24px;
+  padding: 14px;
+  border: 1px solid #dbe2ea;
+  border-radius: 10px;
+  background: #f8fafc;
+}
+
+.comparison-summary h3 {
+  margin-bottom: 8px;
+}
+
+.comparison-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  font-size: 13px;
+}
+
+.comparison-section {
+  margin-bottom: 24px;
+}
+
+.comparison-section h3 {
+  margin-bottom: 12px;
+}
+
+.comparison-table-wrap {
+  overflow-x: auto;
+  border: 1px solid #dbe2ea;
+  border-radius: 10px;
+}
+
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.comparison-table thead {
+  background: #f8fafc;
+}
+
+.comparison-table th,
+.comparison-table td {
+  padding: 12px;
+  border-bottom: 1px solid #eef2f7;
+  color: #0f172a;
+}
+
+.comparison-table th {
+  border-bottom-color: #dbe2ea;
+  text-align: left;
+}
+
+.comparison-table .align-right {
+  text-align: right;
+}
+
+.comparison-table .emphasis {
+  font-weight: 700;
+}
+
+.comparison-note {
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: 8px;
+  background: #f0f7ff;
+  font-size: 14px;
+}
+
+.comparison-note p {
+  margin: 8px 0 0;
+}
+
+.comparison-footer {
+  margin-top: 20px;
+  justify-content: flex-end;
+}
+
 @media (max-width: 1100px) {
   .hero-panel,
   .layout-grid,
@@ -475,7 +602,8 @@ textarea {
   .result-grid,
   .pricing-grid,
   .stats-grid,
-  .history-metrics {
+  .history-metrics,
+  .comparison-summary-grid {
     grid-template-columns: 1fr;
   }
 
